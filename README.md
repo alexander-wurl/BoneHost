@@ -12,4 +12,5 @@ cd bonehost
 docker build -t bonehost .
 docker run -d -p 8080:80 bonehost
 ```
-To test bonehost open localhost:8080 in your local web browser.
+
+To test bonehost open localhost:8080 with a web browser.
