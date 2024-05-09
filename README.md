@@ -1,6 +1,6 @@
 # BoneHost
 
-BoneHost is java script web application.
+BoneHost is a web application for 3d shape analysis of human bones.
 
 ## Quickstart
 
