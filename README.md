@@ -1,17 +1,18 @@
 # BoneHost
 
-BoneHost is java script web application.
+BoneHost is a web application for 3d shape analysis of human bones.
 
 ## Quickstart
 
 Just clone repo, build bonehost image and run bonehost container.
 
 ```
-git clone https://github.com/alexander-wurl/BoneHost
+git clone https://github.com/alexander-wurl/bonehost
 cd bonehost
 docker build -t bonehost .
 docker run -d -p 8080:80 bonehost
 ```
 
 To test bonehost open localhost:8080 with a web browser.
-![bonehost](https://github.com/alexander-wurl/BoneHost/blob/main/bonehost.png)
+
+<img src="https://github.com/alexander-wurl/BoneHost/blob/main/bonehost.png" alt="BoneHost" width="320" height="200">
