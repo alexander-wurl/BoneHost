@@ -1,3 +1,6 @@
+.vs*
+BoneHost.sln
+Assembly-CSharp.csproj
 .gitignore
 Library/
 Temp/
