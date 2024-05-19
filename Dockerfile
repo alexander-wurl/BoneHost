@@ -2,7 +2,7 @@
 FROM nginx:alpine
 
 # copy data into nginx document root directory
-COPY . /usr/share/nginx/html/
+COPY WebGL /usr/share/nginx/html/
 
 # set working directory
 WORKDIR /usr/share/nginx/html
