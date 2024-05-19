@@ -78,13 +78,17 @@ public class Study : MonoBehaviour
     {
     }
 
+    // wahrscheinlich am besten BoneDoc/Server spezifisch einen request zu machen ...
     IEnumerator ServerRequest1()
     {
         // debug
         Debug.Log("DEBUG!!!");
+        
+        //string server = "http://192.168.1.120:61180/bonedoc";
 
         // send (standard) GET request (to server)
-        UnityWebRequest request = UnityWebRequest.Get("");
+        //UnityWebRequest request = UnityWebRequest.Get("");
+        UnityWebRequest request = UnityWebRequest.Get("http://localhost:61180");
 
         // add header with meta infos server needs for analysis
         request.SetRequestHeader("Dataset", DatasetSelector.captionText.text);
