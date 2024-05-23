@@ -83,11 +83,8 @@ public class Study : MonoBehaviour
     {
         // debug
         Debug.Log("DEBUG!!!");
-        
-        //string server = "http://192.168.1.120:61180/bonedoc";
 
-        // send (standard) GET request (to server)
-        //UnityWebRequest request = UnityWebRequest.Get("");
+        // send request to local server
         UnityWebRequest request = UnityWebRequest.Get("http://localhost:61180");
 
         // add header with meta infos server needs for analysis
