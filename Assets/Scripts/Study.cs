@@ -6,8 +6,6 @@ using System;
 
 public class Study : MonoBehaviour
 {
-    //private String server = "http://wurl.spdns.org:16118";
-
     private Text txt;
     //private InputField input;
 
@@ -70,7 +68,6 @@ public class Study : MonoBehaviour
             StartCoroutine(ServerRequest1());
             StudySelector.value = 0; // default/first element does have value 1
         }
-
     }
 
     // Update is called once per frame
@@ -81,11 +78,22 @@ public class Study : MonoBehaviour
     // wahrscheinlich am besten BoneDoc/Server spezifisch einen request zu machen ...
     IEnumerator ServerRequest1()
     {
-        // debug
-        Debug.Log("DEBUG!!!");
+        // load config file from web servers
 
-        // send request to local server
+        // create web request for communication with bonedoc server
+
+        // MORDECHAI <> DAMIAN LOCALHOST = ?
         UnityWebRequest request = UnityWebRequest.Get("http://localhost:61180");
+
+        // MORDECHAI <> DAMIAN LAM = ok
+        //UnityWebRequest request = UnityWebRequest.Get("http://192.168.1.120:61180");
+
+        // MORDECHAI <> LOKAL = ok
+        // UnityWebRequest request = UnityWebRequest.Get("http://10.16.11.4:61180");
+
+        // MORDECHAI <> LOKAL = ok
+        // UnityWebRequest request = UnityWebRequest.Get("http://localhost:61180");
+
 
         // add header with meta infos server needs for analysis
         request.SetRequestHeader("Dataset", DatasetSelector.captionText.text);
@@ -95,8 +103,10 @@ public class Study : MonoBehaviour
         request.SetRequestHeader("EthnicGroup", EthnicGroupSelector.captionText.text);
         request.SetRequestHeader("Study", StudySelector.captionText.text);
 
+        // send request
         yield return request.SendWebRequest();
 
+        // process response
         if (request.result == UnityWebRequest.Result.ConnectionError)
         {
             // Error 
