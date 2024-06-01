@@ -82,18 +82,20 @@ public class Study : MonoBehaviour
 
         // create web request for communication with bonedoc server
 
-        // MORDECHAI <> DAMIAN LOCALHOST = ?
-        UnityWebRequest request = UnityWebRequest.Get("http://localhost:61180");
+        // DAMIAN UNITY DOCKER <> DAMIAN LOCALHOST = NICHT OK
+        //UnityWebRequest request = UnityWebRequest.Get("http://10.16.11.9:61180");
 
-        // MORDECHAI <> DAMIAN LAM = ok
+        // DAMIAN UNITY DOCKER <> DAMIAN LOCALHOST = NICHT OK
+        //UnityWebRequest request = UnityWebRequest.Get("http://localhost:61180");
+
+        // MORDECHAI UNITY <> DAMIAN LAN = ok
         //UnityWebRequest request = UnityWebRequest.Get("http://192.168.1.120:61180");
 
-        // MORDECHAI <> LOKAL = ok
+        // MORDECHAI UNITY <> LOKAL = ok
         // UnityWebRequest request = UnityWebRequest.Get("http://10.16.11.4:61180");
 
-        // MORDECHAI <> LOKAL = ok
-        // UnityWebRequest request = UnityWebRequest.Get("http://localhost:61180");
-
+        // MORDECHAI UNITY <> LOKAL = ok
+        UnityWebRequest request = UnityWebRequest.Get("http://localhost:61180");
 
         // add header with meta infos server needs for analysis
         request.SetRequestHeader("Dataset", DatasetSelector.captionText.text);
