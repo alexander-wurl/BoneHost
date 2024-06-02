@@ -32,9 +32,6 @@ public class Study : MonoBehaviour
         // find object 'Info' for output
         txt = GameObject.Find("/Canvas/Messages").GetComponent<Text>();
 
-        // set input file to define server
-        //input = GameObject.Find("WebServerInputField").GetComponent<InputField>();
-
         // selectors
         DatasetSelector = GameObject.Find("DatasetSelector").GetComponent<Dropdown>();
         AnatomySelector = GameObject.Find("AnatomySelector").GetComponent<Dropdown>();
@@ -78,6 +75,17 @@ public class Study : MonoBehaviour
     // wahrscheinlich am besten BoneDoc/Server spezifisch einen request zu machen ...
     IEnumerator ServerRequest1()
     {
+        string bonedoc_url = ConfigLoader.GetConfigValue("bonedoc_url");
+        Debug.Log("BoneDoc URL:" + bonedoc_url);
+
+        if (string.IsNullOrEmpty(bonedoc_url))
+        {
+            yield break;
+        }
+
+        UnityWebRequest request = UnityWebRequest.Get(bonedoc_url);
+
+
         // load config file from web servers
 
         // create web request for communication with bonedoc server
@@ -95,7 +103,7 @@ public class Study : MonoBehaviour
         // UnityWebRequest request = UnityWebRequest.Get("http://10.16.11.4:61180");
 
         // MORDECHAI UNITY <> LOKAL = ok
-        UnityWebRequest request = UnityWebRequest.Get("http://localhost:61180");
+        //UnityWebRequest request = UnityWebRequest.Get("http://localhost:61180");
 
         // add header with meta infos server needs for analysis
         request.SetRequestHeader("Dataset", DatasetSelector.captionText.text);
