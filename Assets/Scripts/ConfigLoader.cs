@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using UnityEditor.PackageManager.Requests;
 using UnityEngine;
 
 public static class ConfigLoader
@@ -8,13 +9,16 @@ public static class ConfigLoader
     private static string configFileName = "bonehost.conf";
     private static string configFilePath;
 
+    private static string persistentFilePath;
+
     static ConfigLoader()
     {
         // Set the file path relative to the game's directory
         configFilePath = Path.Combine(Application.dataPath, configFileName);
-
+        Debug.Log("configFilePath: " + configFilePath);
         // Alternatively, use the persistent data path for a platform-independent location
-        // configFilePath = Path.Combine(Application.persistentDataPath, configFileName);
+        persistentFilePath = Path.Combine(Application.persistentDataPath, configFileName);
+        Debug.Log("persistentFilePath: " + persistentFilePath);
     }
 
     public static Dictionary<string, string> LoadConfig()
