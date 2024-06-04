@@ -26,9 +26,29 @@ public class ConfigLoader : MonoBehaviour
         // variable to define all config keys and values with
         configValues = new Dictionary<string, string>();
 
-        if (Application.platform == RuntimePlatform.WebGLPlayer)
+        Debug.Log("Load " + configFilePath + " from disc ...");
+
+        // Get File locally
+        if (File.Exists(configFilePath))
         {
-            // Use UnityWebRequest to load the config file via web request
+            string[] lines = File.ReadAllLines(configFilePath);
+            foreach (string line in lines)
+            {
+                if (!string.IsNullOrWhiteSpace(line) && line.Contains("="))
+                {
+                    string[] keyValue = line.Split('=');
+                    if (keyValue.Length == 2)
+                    {
+                        configValues[keyValue[0].Trim()] = keyValue[1].Trim();
+                    }
+                }
+            }
+        }
+        // Use UnityWebRequest to load the config file via web request
+        else
+        {
+            Debug.Log("File not found on disc! Trying to get it via UnityWebRequest ...");
+
             UnityWebRequest request = UnityWebRequest.Get(configFilePath);
             yield return request.SendWebRequest();
 
@@ -51,30 +71,9 @@ public class ConfigLoader : MonoBehaviour
                     }
                 }
             }
+
         }
-        else
-        {
-            // Use standard file I/O for local testing
-            if (File.Exists(configFilePath))
-            {
-                string[] lines = File.ReadAllLines(configFilePath);
-                foreach (string line in lines)
-                {
-                    if (!string.IsNullOrWhiteSpace(line) && line.Contains("="))
-                    {
-                        string[] keyValue = line.Split('=');
-                        if (keyValue.Length == 2)
-                        {
-                            configValues[keyValue[0].Trim()] = keyValue[1].Trim();
-                        }
-                    }
-                }
-            }
-            else
-            {
-                Debug.LogError("Config file not found: " + configFilePath);
-            }
-        }
+
 
     }
 
