@@ -14,7 +14,6 @@ public class ConfigLoader : MonoBehaviour
     {
         // Set the config file path for bonehost
         configFilePath = Path.Combine(Application.dataPath, "bonehost.conf");
-        Debug.Log("Path for config file: " + configFilePath);
 
         // Start loading the config file
         StartCoroutine(LoadConfig());
@@ -25,8 +24,6 @@ public class ConfigLoader : MonoBehaviour
        
         // variable to define all config keys and values with
         configValues = new Dictionary<string, string>();
-
-        Debug.Log("Load " + configFilePath + " from disc ...");
 
         // Get File locally
         if (File.Exists(configFilePath))
@@ -47,7 +44,7 @@ public class ConfigLoader : MonoBehaviour
         // Use UnityWebRequest to load the config file via web request
         else
         {
-            Debug.Log("File not found on disc! Trying to get it via UnityWebRequest ...");
+            Debug.Log("File not found on disc! Trying UnityWebRequest ...");
 
             UnityWebRequest request = UnityWebRequest.Get(configFilePath);
             yield return request.SendWebRequest();
