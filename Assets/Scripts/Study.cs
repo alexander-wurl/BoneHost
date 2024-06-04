@@ -3,11 +3,15 @@ using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.Networking;
 using System;
+using System.Collections.Generic;
 
 public class Study : MonoBehaviour
 {
+    // class for local or web request for configuration file
+    private ConfigLoader ConfigSelector;
+
+    // 
     private Text txt;
-    //private InputField input;
 
     // dataset
     private Dropdown DatasetSelector;
@@ -42,6 +46,10 @@ public class Study : MonoBehaviour
         // define listener 'SelectStudy' for dropdown element
         StudySelector = GameObject.Find("StudySelector").GetComponent<Dropdown>();
         StudySelector.onValueChanged.AddListener(delegate { StartStudy(); });
+
+        // define ConfigSelector instance by calling FindObjectOfType
+        ConfigSelector = FindObjectOfType<ConfigLoader>();
+
     }
 
     public void StartStudy()
@@ -62,7 +70,7 @@ public class Study : MonoBehaviour
         else
         {
             txt.text = "Please wait ...";
-            StartCoroutine(ServerRequest1());
+            StartCoroutine(BoneDocRequest());
             StudySelector.value = 0; // default/first element does have value 1
         }
     }
@@ -73,19 +81,22 @@ public class Study : MonoBehaviour
     }
 
     // wahrscheinlich am besten BoneDoc/Server spezifisch einen request zu machen ...
-    IEnumerator ServerRequest1()
+    IEnumerator BoneDocRequest()
     {
-        string bonedoc_url = ConfigLoader.GetConfigValue("bonedoc_url");
-        Debug.Log("BoneDoc URL:" + bonedoc_url);
 
-        if (string.IsNullOrEmpty(bonedoc_url))
+        // check for value's first
+        while (ConfigSelector.GetConfigValues() == null)
         {
-            yield break;
+            yield return null;
         }
 
+        // get the value for bonedoc_url
+        string bonedoc_url = ConfigSelector.GetConfigValue("bonedoc_url");
+
+        // connect to the service behind then bonedoc_url value
         UnityWebRequest request = UnityWebRequest.Get(bonedoc_url);
 
-        // add header with meta infos server needs for analysis
+        // define user header with info server needs for analysis
         request.SetRequestHeader("Dataset", DatasetSelector.captionText.text);
         request.SetRequestHeader("Anatomy", AnatomySelector.captionText.text);
         request.SetRequestHeader("Side", SideSelector.captionText.text);

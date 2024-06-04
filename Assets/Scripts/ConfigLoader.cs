@@ -1,56 +1,85 @@
+using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
+using UnityEngine.Networking;
+using System.IO;
 
-public static class ConfigLoader
+public class ConfigLoader : MonoBehaviour
 {
-    // private static string configFileName = @"C:\configuration\bonehost.conf";
-    private static string configFileName = "bonehost.conf";
-    private static string configFilePath;
+    //private static string configFilePath;
+    private Dictionary<string, string> configValues;
+    private string configFilePath;
 
-    private static string persistentFilePath;
-
-    static ConfigLoader()
+    void Start()
     {
-        // Set the file path relative to the game's directory
-        configFilePath = Path.Combine(Application.dataPath, configFileName);
-        Debug.Log("configFilePath: " + configFilePath);
-        // Alternatively, use the persistent data path for a platform-independent location
-        persistentFilePath = Path.Combine(Application.persistentDataPath, configFileName);
-        Debug.Log("persistentFilePath: " + persistentFilePath);
+        // Set the config file path for bonehost
+        configFilePath = Path.Combine(Application.dataPath, "bonehost.conf");
+        Debug.Log("Path for config file: " + configFilePath);
+
+        // Start loading the config file
+        StartCoroutine(LoadConfig());
     }
 
-    public static Dictionary<string, string> LoadConfig()
+    IEnumerator LoadConfig()
     {
-        Dictionary<string, string> configValues = new Dictionary<string, string>();
+       
+        // variable to define all config keys and values with
+        configValues = new Dictionary<string, string>();
 
-        if (File.Exists(configFilePath))
+        if (Application.platform == RuntimePlatform.WebGLPlayer)
         {
-            string[] lines = File.ReadAllLines(configFilePath);
-            foreach (string line in lines)
+            // Use UnityWebRequest to load the config file via web request
+            UnityWebRequest request = UnityWebRequest.Get(configFilePath);
+            yield return request.SendWebRequest();
+
+            if (request.result != UnityWebRequest.Result.Success)
             {
-                if (!string.IsNullOrWhiteSpace(line) && line.Contains("="))
+                Debug.LogError("Failed to load " + configFilePath + ": " + request.error);
+            }
+            else
+            {
+                string[] lines = request.downloadHandler.text.Split('\n');
+                foreach (string line in lines)
                 {
-                    string[] keyValue = line.Split('=');
-                    if (keyValue.Length == 2)
+                    if (!string.IsNullOrWhiteSpace(line) && line.Contains("="))
                     {
-                        configValues[keyValue[0].Trim()] = keyValue[1].Trim();
+                        string[] keyValue = line.Split('=');
+                        if (keyValue.Length == 2)
+                        {
+                            configValues[keyValue[0].Trim()] = keyValue[1].Trim();
+                        }
                     }
                 }
             }
         }
         else
         {
-            Debug.LogError("Config file not found: " + configFilePath);
+            // Use standard file I/O for local testing
+            if (File.Exists(configFilePath))
+            {
+                string[] lines = File.ReadAllLines(configFilePath);
+                foreach (string line in lines)
+                {
+                    if (!string.IsNullOrWhiteSpace(line) && line.Contains("="))
+                    {
+                        string[] keyValue = line.Split('=');
+                        if (keyValue.Length == 2)
+                        {
+                            configValues[keyValue[0].Trim()] = keyValue[1].Trim();
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Debug.LogError("Config file not found: " + configFilePath);
+            }
         }
 
-        return configValues;
     }
 
-    public static string GetConfigValue(string key)
+    public string GetConfigValue(string key)
     {
-        Dictionary<string, string> configValues = LoadConfig();
-
         if (configValues.TryGetValue(key, out string value))
         {
             return value;
@@ -61,4 +90,10 @@ public static class ConfigLoader
             return null;
         }
     }
+
+    public Dictionary<string, string> GetConfigValues()
+    {
+        return configValues;
+    }
+
 }
