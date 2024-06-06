@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using System.IO;
+using System;
 
 public class ConfigLoader : MonoBehaviour
 {
@@ -28,6 +29,8 @@ public class ConfigLoader : MonoBehaviour
         // Get File locally
         if (File.Exists(configFilePath))
         {
+            Debug.Log("Reading " + configFilePath + " from disc ...");
+
             string[] lines = File.ReadAllLines(configFilePath);
             foreach (string line in lines)
             {
@@ -44,14 +47,15 @@ public class ConfigLoader : MonoBehaviour
         // Use UnityWebRequest to load the config file via web request
         else
         {
-            Debug.Log("File not found on disc! Trying UnityWebRequest ...");
+
+            Debug.Log("Reading " + configFilePath + " via a web request ...");
 
             UnityWebRequest request = UnityWebRequest.Get(configFilePath);
             yield return request.SendWebRequest();
 
             if (request.result != UnityWebRequest.Result.Success)
             {
-                Debug.LogError("Failed to load " + configFilePath + ": " + request.error);
+                Debug.LogError("Could not receive file: " + request.error);
             }
             else
             {
@@ -71,7 +75,6 @@ public class ConfigLoader : MonoBehaviour
 
         }
 
-
     }
 
     public string GetConfigValue(string key)
@@ -82,7 +85,7 @@ public class ConfigLoader : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Key not found in config: " + key);
+            Debug.LogError("Key " + key + " not found!");
             return null;
         }
     }
