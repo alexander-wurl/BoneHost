@@ -48,7 +48,7 @@ public class ConfigLoader : MonoBehaviour
         else
         {
 
-            Debug.Log("Reading " + configFilePath + " via a web request ...");
+            //Debug.Log("Reading " + configFilePath + " via a web request ...");
 
             UnityWebRequest request = UnityWebRequest.Get(configFilePath);
             yield return request.SendWebRequest();
