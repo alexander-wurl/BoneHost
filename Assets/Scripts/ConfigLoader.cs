@@ -14,6 +14,7 @@ public class ConfigLoader : MonoBehaviour
     void Start()
     {
         // Set the config file path for bonehost
+        // Application.dataPath is url or local folder to acess configuration file
         configFilePath = Path.Combine(Application.dataPath, "bonehost.conf");
 
         // Start loading the config file
@@ -47,9 +48,6 @@ public class ConfigLoader : MonoBehaviour
         // Use UnityWebRequest to load the config file via web request
         else
         {
-
-            //Debug.Log("Reading " + configFilePath + " via a web request ...");
-
             UnityWebRequest request = UnityWebRequest.Get(configFilePath);
             yield return request.SendWebRequest();
 
