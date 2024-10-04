@@ -8,7 +8,7 @@ COPY WebGL /usr/share/nginx/html/
 WORKDIR /usr/share/nginx/html
 
 # set port container will listen on
-EXPOSE 8080
+EXPOSE 80
 
 # start nginx webserver in foreground
 CMD ["nginx", "-g", "daemon off;"]
