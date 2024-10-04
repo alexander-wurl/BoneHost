@@ -1,78 +1,93 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class LandmarkHover : MonoBehaviour
 {
-    // ray
-    Ray ray;
+    // Ray and raycast hit
+    private Ray ray;
+    private RaycastHit hit;
 
-    // ray hit
-    RaycastHit hit;
+    // Text component showing the landmarks
+    private Text landmarksText;
 
-    // text of anatomical landmarks
-    private Text LandmarksText;
+    // The currently selected landmark GameObject
+    private GameObject landmark = null;
 
-    // gui element for selected anatomical landmark
-    private GameObject LandmarksSelector;
+    // Store the original text for reset purposes
+    private string originalText;
 
-    // selected anatomical landmark
-    private GameObject Landmark = null;
-
-    // init elements to be used
+    // Init elements to be used
     private void Start()
     {
-        LandmarksText = GameObject.Find("/Canvas/LandmarksPanel/Landmarks").GetComponent<Text>();
-        LandmarksSelector = GameObject.Find("/Canvas/LandmarksPanel/Panel");
-        LandmarksSelector.GetComponent<Image>().color = Color.clear;
+        // Find the landmarks text object
+        landmarksText = GameObject.Find("/Canvas/LandmarksPanel/Landmarks").GetComponent<Text>();
+        // Store the original text to reset later
+        originalText = landmarksText.text;
     }
 
-    // each frame a ray looks for intersections with landmark collider (OnMouseOver might be used as well)
-    // if one is found extracted name of collider is used to color text in list of anatomical landmarks
-    // landmark size will be adjusted as well
-    void Update()
+    // Method to highlight the target string in the landmarks text
+    void HighlightTargetString(string targetString)
     {
-        // ray from camera
-        ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-        if (Physics.Raycast(ray, out hit))
+        if (originalText.Contains(targetString))
         {
-            // find landmark based on collider name
-            Landmark = GameObject.Find("/Bone/" + hit.collider.name);
-            Landmark.transform.localScale = new Vector3(15, 15, 15);
+            // Replace the target string with a highlighted version
+            string highlightedText = originalText.Replace(targetString, $"<color=red>{targetString}</color>");
 
-            // find hovered landmark in landmark list
-            string[] Array = LandmarksText.text.Split("\n"[0]);
-
-            // cut string because label contains 'Sphere' (= 6 chars)
-            string l = hit.collider.name.Substring(6);
-
-            // loop anatomical landmark list until hovered element is found
-            for (int i = 0; i < Array.Length; ++i)
+            // Only update the text if it has changed (to avoid unnecessary mesh rebuilds)
+            if (landmarksText.text != highlightedText)
             {
-                if (Array[i] == l)
-                {
-                    // adjust local position and color to make anatomical landmark 'selected'
-                    LandmarksSelector.transform.localPosition = new Vector3(LandmarksSelector.transform.localPosition.x, 270 - (i * 16), LandmarksSelector.transform.localPosition.z);
-                    Color c = Color.red;
-                    c.a = 0.5f;
-                    LandmarksSelector.GetComponent<Image>().color = c;
-                }
-
+                landmarksText.text = highlightedText;
             }
         }
-
     }
 
-    // reset landmark size and color
-    private void OnMouseExit()
+    // Method to reset the highlighted text to the original
+    void ResetHighlightedText()
     {
-        if (Landmark)
+        landmarksText.text = originalText; // Set back to original text
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        // Ray from the camera to the mouse position
+        ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        // Perform raycast and check if it hits something
+        if (Physics.Raycast(ray, out hit))
         {
-            Landmark.transform.localScale = new Vector3(7.5f, 7.5f, 7.5f);
-            LandmarksSelector.GetComponent<Image>().color = Color.clear;
+            // Find the landmark by collider name
+            landmark = GameObject.Find("/Bone/" + hit.collider.name);
+            if (landmark != null)
+            {
+                // Scale the landmark for visibility
+                landmark.transform.localScale = new Vector3(15, 15, 15);
+
+                // Cut the collider name to match the target string format
+                string targetString = hit.collider.name.Substring(6);
+
+                // Highlight the target string in the text
+                HighlightTargetString(targetString);
+            }
+        }
+        else
+        {
+            // Reset highlighted text if the mouse is not over any landmark
+            ResetHighlightedText();
         }
     }
 
+    // Reset the landmark size when the mouse exits
+    private void OnMouseExit()
+    {
+        if (landmark)
+        {
+            // Reset the scale of the landmark
+            landmark.transform.localScale = new Vector3(7.5f, 7.5f, 7.5f);
+            ResetHighlightedText(); // Reset text highlighting when mouse exits
+        }
+    }
 }
